@@ -68,8 +68,8 @@ ULONG     ulImage[MAX_FILE];            /* Image buffers from DIVE           */
 PVOID     pbImage[MAX_FILE];            /* Pointer to DIVE image buffer      */
 PVOID     pbSrcImage[MAX_FILE];         /* Pointer to Dos image buffer       */
 PBYTE     pPalette[MAX_FILE];           /* Pointer to bitmap palette area    */
-PSZ       pszMyWindow = "MyWindow";     /* Window class name                 */
-PSZ       pszTitleText = "DIVE SAMPLE"; /* Title bar text                    */
+PSZ       pszMyWindow = (PSZ) "MyWindow";     /* Window class name                 */
+PSZ       pszTitleText = (PSZ) "DIVE SAMPLE"; /* Title bar text                    */
 ULONG     ulToEnd = 0;                  /* Controls the display thread       */
 DIVE_CAPS DiveCaps = {0};
 FOURCC    fccFormats[100] = {0};        /* Color format code                 */
@@ -79,22 +79,22 @@ ULONG     ulNumFrames=0;                /* Frame counter                     */
 /*  Default bitmap file name definitions
 **       These files are used only when EXE is called without parameter.
 */
-PSZ  pszDefFile[]   = { {"TPG20000.BMP"},
-                        {"TPG20001.BMP"},
-                        {"TPG20002.BMP"},
-                        {"TPG20003.BMP"},
-                        {"TPG20004.BMP"},
-                        {"TPG20005.BMP"},
-                        {"TPG20006.BMP"},
-                        {"TPG20007.BMP"},
-                        {"TPG20008.BMP"},
-                        {"TPG20009.BMP"},
-                        {"TPG20010.BMP"},
-                        {"TPG20011.BMP"},
-                        {"TPG20012.BMP"},
-                        {"TPG20013.BMP"},
-                        {"TPG20014.BMP"},
-                        {"TPG20015.BMP"} };
+PSZ  pszDefFile[]   = { (PSZ)"TPG20000.BMP",
+                        (PSZ)"TPG20001.BMP",
+                        (PSZ)"TPG20002.BMP",
+                        (PSZ)"TPG20003.BMP",
+                        (PSZ)"TPG20004.BMP",
+                        (PSZ)"TPG20005.BMP",
+                        (PSZ)"TPG20006.BMP",
+                        (PSZ)"TPG20007.BMP",
+                        (PSZ)"TPG20008.BMP",
+                        (PSZ)"TPG20009.BMP",
+                        (PSZ)"TPG20010.BMP",
+                        (PSZ)"TPG20011.BMP",
+                        (PSZ)"TPG20012.BMP",
+                        (PSZ)"TPG20013.BMP",
+                        (PSZ)"TPG20014.BMP",
+                        (PSZ)"TPG20015.BMP" };
 
 /*
 **  It is the definition how many time draw one bitmap continuously to
@@ -315,11 +315,11 @@ VOID APIENTRY DirectMoveMem ( ULONG parm1 )
             DosQuerySysInfo ( QSV_MS_COUNT, QSV_MS_COUNT, &ulTime1, 4L );
             ulTime1 -= ulTime0;
             if ( ulTime1 )
-               sprintf ( achFrameRate, "%d: %d: %5.2f frames per second.",
+               sprintf ( achFrameRate, "%ld: %ld: %5.2f frames per second.",
                            pwinData->hDive, ulFramesToTime,
                            (float)ulFramesToTime * 1000.0 / (float)ulTime1 );
             else
-               sprintf ( achFrameRate, "%d: %d: Lots of frames per second.",
+               sprintf ( achFrameRate, "%ld: %ld: Lots of frames per second.",
                            pwinData->hDive, ulFramesToTime );
             WinPostMsg ( pwinData->hwndFrame, WM_COMMAND,
                            (PVOID)ID_NEWTEXT, achFrameRate );
@@ -336,7 +336,7 @@ VOID APIENTRY DirectMoveMem ( ULONG parm1 )
          /* Let other threads and processes have some time.
          */
          }
-      DosSleep ( 0 );
+      DosSleep ( 1 );
       }
 
    return;
@@ -369,10 +369,11 @@ unsigned long ReadFile ( ULONG iFile, unsigned char *pszFile,
    ULONG ulNumBytes;            /* output for number of bytes actually read */
    ULONG ulFileLength;          /* file length                              */
    PBYTE pbBuffer;              /* pointer to the image/ temp. palette data */
-   ULONG ulScanLineBytes;       /* output for number of bytes a scan line   */
-   ULONG ulScanLines;           /* output for height of the buffer          */
+   // ULONG ulScanLineBytes;       /* output for number of bytes a scan line   */
+   // ULONG ulScanLines;           /* output for height of the buffer          */
    PBITMAPFILEHEADER2 pImgHdr;  /* pointer to bitmapheader                  */
-   ULONG i, j;
+   ULONG i; 
+   // ULONG j;
    PBYTE pbTmpDst;              /* temporaly destination pointer            */
 
    /* Attempt to open up the passed filename.
@@ -634,15 +635,15 @@ unsigned long ReadFile ( ULONG iFile, unsigned char *pszFile,
  *
  ****************************************************************************/
 
-main ( int argc, char *argv[] )
+int main ( int argc, char *argv[] )
    {
-   TID       tidBlitThread;        /* Thread ID for DirectMemMove          */
+   // TID       tidBlitThread;        /* Thread ID for DirectMemMove          */
    HMQ       hmq;                  /* Message queue handle                 */
    QMSG      qmsg;                 /* Message from message queue           */
    ULONG     flCreate;             /* Window creation control flags        */
    ULONG     i;                    /* Index for the files to open          */
    PWINDATA  pwinData;             /* Pointer to window data               */
-   PLONG     pPal;                 /* Pointer to system physical palette   */
+   // PLONG     pPal;                 /* Pointer to system physical palette   */
 
 
    /* Initialize the presentation manager, and create a message queue.
@@ -896,7 +897,8 @@ MRESULT EXPENTRY MyWindowProc ( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
    ULONG     ulScanLineBytes;       /* Size of scan line for current window */
    ULONG     ulScanLines;           /* Number of scan lines in window       */
    ULONG     ulRemainder;           /* Used to check direct mode support    */
-   ULONG     i, rc;
+   ULONG     i;
+   //ULONG	 rc;
 
    /* Get the pointer to window data
    */
@@ -1260,66 +1262,66 @@ MRESULT EXPENTRY MyDlgProc ( HWND hwndDlg, ULONG msg, MPARAM mp1, MPARAM mp2 )
          WinSetFocus ( HWND_DESKTOP, hwndDlg );
 
          if ( !DiveCaps.fScreenDirect )
-            WinSetDlgItemText ( hwndDlg, ID_EF_11, "NO" );
+            WinSetDlgItemText ( hwndDlg, ID_EF_11, (PCSZ) "NO" );
          else
-            WinSetDlgItemText ( hwndDlg, ID_EF_11, "YES" );
+            WinSetDlgItemText ( hwndDlg, ID_EF_11, (PCSZ) "YES" );
 
          if ( !DiveCaps.fBankSwitched )
-            WinSetDlgItemText ( hwndDlg, ID_EF_12, "NO" );
+            WinSetDlgItemText ( hwndDlg, ID_EF_12, (PCSZ) "NO" );
          else
-            WinSetDlgItemText ( hwndDlg, ID_EF_12, "YES" );
+            WinSetDlgItemText ( hwndDlg, ID_EF_12, (PCSZ) "YES" );
 
          pString = _ultoa ( DiveCaps.ulDepth, string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_13, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_13, (PCSZ) pString );
 
          pString = _ultoa ( DiveCaps.ulHorizontalResolution,
                              string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_14, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_14, (PCSZ) pString );
 
          pString = _ultoa ( DiveCaps.ulVerticalResolution, string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_15, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_15, (PCSZ) pString );
 
          pString = _ultoa ( DiveCaps.ulScanLineBytes, string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_16, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_16, (PCSZ) pString );
 
          switch (DiveCaps.fccColorEncoding)
             {
             case FOURCC_LUT8:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "256" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "256" );
                break;
             case FOURCC_R565:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "64K" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "64K" );
                break;
             case FOURCC_R555:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "32K" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "32K" );
                break;
             case FOURCC_R664:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "64K" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "64K" );
                break;
             case FOURCC_RGB3:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "16M" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "16M" );
                break;
             case FOURCC_BGR3:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "16M" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "16M" );
                break;
             case FOURCC_RGB4:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "16M" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "16M" );
                break;
             case FOURCC_BGR4:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "16M" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "16M" );
                break;
             default:
-               WinSetDlgItemText ( hwndDlg, ID_EF_17, "???" );
+               WinSetDlgItemText ( hwndDlg, ID_EF_17, (PCSZ) "???" );
             } /* endswitch */
 
          pString = _ultoa ( DiveCaps.ulApertureSize, string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_18, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_18, (PCSZ) pString );
 
          pString = _ultoa ( DiveCaps.ulInputFormats, string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_19, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_19, (PCSZ) pString );
 
          pString = _ultoa ( DiveCaps.ulOutputFormats, string, 10 );
-         WinSetDlgItemText ( hwndDlg, ID_EF_20, pString );
+         WinSetDlgItemText ( hwndDlg, ID_EF_20, (PCSZ) pString );
 
          break;
 
