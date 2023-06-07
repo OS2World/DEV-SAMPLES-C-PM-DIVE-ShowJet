@@ -75,6 +75,7 @@ DIVE_CAPS DiveCaps = {0};
 FOURCC    fccFormats[100] = {0};        /* Color format code                 */
 ULONG     ulFramesToTime=8;             /* Interval of frames to get time    */
 ULONG     ulNumFrames=0;                /* Frame counter                     */
+FOURCC    fccIntermediate = FOURCC_SCRN;  /* Added patch to support 16M 	*/
 
 /*  Default bitmap file name definitions
 **       These files are used only when EXE is called without parameter.
@@ -684,6 +685,12 @@ int main ( int argc, char *argv[] )
       return ( 1 );
       }
 
+	if ( DiveCaps.fccColorEncoding == FOURCC_BGR4 )
+		fccIntermediate = FOURCC_BGR3;
+	else if ( DiveCaps.fccColorEncoding == FOURCC_RGB4 )
+		fccIntermediate = FOURCC_RGB3;
+
+
    /* Calculate number of bytes per pell
    */
    pwinData->ulColorSizeBytes = DiveCaps.ulScanLineBytes/
@@ -1112,7 +1119,8 @@ MRESULT EXPENTRY MyWindowProc ( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
 
             SetupBlitter.lDstPosX = 0;
             SetupBlitter.lDstPosY = 0;
-            SetupBlitter.fccDstColorFormat = FOURCC_SCRN;
+            // SetupBlitter.fccDstColorFormat = FOURCC_SCRN;
+            SetupBlitter.fccDstColorFormat = fccIntermediate; //PAtch for 16M
             SetupBlitter.lScreenPosX = 0;
             SetupBlitter.lScreenPosY = 0;
             SetupBlitter.ulNumDstRects = 1;
@@ -1161,7 +1169,7 @@ MRESULT EXPENTRY MyWindowProc ( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
                */
                if ( DiveAllocImageBuffer (pwinData->hDive,
                                           &(ulImage[i]),
-                                          FOURCC_SCRN,
+                                          fccIntermediate,
                                           rcl.xRight,
                                           rcl.yTop,
                                           0, 0) )
@@ -1189,7 +1197,9 @@ MRESULT EXPENTRY MyWindowProc ( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
             /* Now setup blitter to blit to the screen
             ** Note: This code has no affect when in direct mode
             */
-            SetupBlitter.fccSrcColorFormat = FOURCC_SCRN;
+            // SetupBlitter.fccSrcColorFormat = FOURCC_SCRN;
+			SetupBlitter.fccSrcColorFormat = fccIntermediate;
+			SetupBlitter.fccDstColorFormat = FOURCC_SCRN;
             SetupBlitter.lScreenPosX = pointl.x;
             SetupBlitter.lScreenPosY = pointl.y;
             SetupBlitter.fInvert = FALSE;
